@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import './App.css';
 import './react-table.css';
 
-import firebase from './firebase.js';
+import firebase, { auth, provider } from './firebase.js';
 
 class App extends Component {
 	constructor(props){
@@ -18,10 +18,13 @@ class App extends Component {
 		   modified_at : '',
 		   mileage : '',
 		   is_active : '',
-		   cars : []
+		   cars : [],
+		   user : null
         };
 		this.handleChange = this.handleChange.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
+		this.handleAddCar = this.handleAddCar.bind(this);
+		this.login = this.login.bind(this); 
+		this.logout = this.logout.bind(this); 
     }
 
     handleChange = (e) => {
@@ -30,7 +33,25 @@ class App extends Component {
         });
 	}
 	
-	handleSubmit(e) {
+	logout() {
+		auth.signOut()
+			.then(() => {
+			this.setState({
+				user: null
+			});
+		});
+	}
+	login() {
+	auth.signInWithPopup(provider) 
+		.then((result) => {
+			const user = result.user;
+			this.setState({
+				user
+			});
+		});
+	}
+
+	handleAddCar(e) {
 		e.preventDefault();
 		const carsRef = firebase.database().ref('cars');
 		const car = {
@@ -58,8 +79,8 @@ class App extends Component {
 		});
 	}
 
-	removeCar(carId) {
-		const carRef = firebase.database().ref(`/cars/${carId}`);
+	removeCar(carIndex) {
+		const carRef = firebase.database().ref(`/cars/${carIndex}`);
 		carRef.remove();
 	}
 
@@ -79,19 +100,16 @@ class App extends Component {
                     created_at : cars[car].created_at,
                     modified_at : cars[car].modified_at,
 					mileage: cars[car].mileage,
-                    is_active : cars[car].is_active
+					is_active : cars[car].is_active,
+					remove : <button onClick={() => this.removeCar(car)}>Remove</button>
 				});
 			}
-			tableData.shift(); // removes first ( unneeded ) element - header
-			console.log(tableData);
+			tableData.shift(); // removes first ( unneeded ) element - the header
 			this.setState({
 				cars: tableData
 			});
 		});
 
-
-		
-			
 
 
 	
@@ -122,12 +140,17 @@ class App extends Component {
 			<div className='app'>
 				<header>
 					<div className='wrapper'>
-						<h1>Car Fleet DB Manager</h1>
+							<div className='title'><h1>Car Fleet DB Manager</h1></div>
+							{this.state.user ?
+								<button onClick={this.logout}>Log Out</button>                
+								:
+								<button onClick={this.login}>Log In</button>              
+							}
 					</div>
 				</header>
 				<div className='container'>
 					<section className='add-item'>
-						<form onSubmit={this.handleSubmit}>
+						<form onSubmit={this.handleAddCar}>
 							<span>Add a car: </span>
 							<input type="text" name="id" placeholder="Car's ID" onChange={this.handleChange} value={this.state.id} />
 							<input type="text" name="registration_number" placeholder="Registration number" onChange={this.handleChange} value={this.state.registration_number} />
@@ -182,35 +205,20 @@ class App extends Component {
 							{
 								Header: "Is Active",
 								accessor: "is_active"
+							},
+							{
+								Header: "Remove",
+								accessor: "remove"
 							}
 						]}
 						defaultPageSize={20}
 						className="-striped -highlight"/>
 					</section>
 				</div>
-				<div className="loggedOut" id="loggedOut">
-						<h1>Hello Stranger, please log in.</h1>
-						<form>
-							<p>Podaj login</p>
-							<input className="input email" 
-								type="text" 
-								name="login"
-								onChange={this.handleChange}
-								value={this.state.login}/>
-							<p>Podaj hasło</p>
-							<input className="input password" 
-								type="password" 
-								name="pass"
-								onChange={this.handleChange}
-								value={this.state.pass}/>
-							<div className="logInButton" 
-								onClick={this.logInCheck}>Zaloguj się</div>
-						</form>
-						{/* <IndexLink to="/loggedIn" activeClassName="active-tab">Loging In</IndexLink> */}
-					</div>
 			</div>
 		);
  	}
 }
 
 export default App;
+
