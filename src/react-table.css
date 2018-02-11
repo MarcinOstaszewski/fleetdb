@@ -186,6 +186,16 @@
 .ReactTable .rt-tbody .rt-td:last-child {
     border-right: 0
 }
+.ReactTable .rt-tbody .rt-td:last-child button {
+    border-radius: 4px;
+    background-color: rgb(223, 37, 4);
+    cursor: pointer;
+    border: 0;
+    color: #fff;
+    font-size: 12px;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+    padding: 4px 5px;
+}
 
 .ReactTable .rt-tbody .rt-expandable {
     cursor: pointer
