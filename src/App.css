@@ -6,7 +6,7 @@ body {
 header {
   color: #fff;
   background-color: #103D5D;
-  padding: 10px 0 7px 15px;
+  padding: 10px;
 }
 
 header h1 {
@@ -18,14 +18,20 @@ header h1 {
   vertical-align: middle;
 }
 
-.fa {
-  font-size: 22px;
-  transform: translateY(50deg);  
+header .wrapper {
+  display: flex;
+  justify-content: space-between;
 }
 
-header i {
-  vertical-align: middle;
-  margin-left: 12px;
+header .wrapper button {
+  border-radius: 5px;
+  background-color: #FA6900;
+  cursor: pointer;
+  border: 0;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+  padding: 0px 15px;
 }
 
 .container {
@@ -41,8 +47,6 @@ header i {
 }
 
 .add-item {
-  display: flex;
-  justify-content: space-evenly;
   border-radius: 3px;
   border-top: 3px solid #103D5D;
   background-color: rgb(171, 192, 240);
@@ -53,36 +57,34 @@ header i {
     0 1px 8px 0 rgba(0,0,0,.2);
   margin-bottom: 10px;  
   width: 100%;
-  margin-right: auto;
 }
 
 .add-item form {
+  display: flex;
   width: 100%;
-  overflow: hidden;
-}
-form span {
   font-size: 14px;
+  flex-wrap: wrap;
+}
+form > div {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
 }
 input {
   background-color: rgb(224, 231, 247);
   font-size: 14px;
   color: #000;
   padding: 4px 5px;
-  margin: 3px;
+  margin: 4px 2px;
   border: 0;
-  display: inline-block;
-  width: 8%;
-  /* width: 100%;   */
+  width: 80%;
 }
 form button {
-  width: 5%;
-  margin: 5px;
   border-radius: 5px;
-  /* min-width: 88px; */
   background-color: #FA6900;
   cursor: pointer;
   border: 0;
-  /* min-width: 120px; */
   color: #fff;
   font-size: 14px;
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
@@ -128,17 +130,15 @@ li p {
   width: 100%;
 }
 
-
-.App {
-  text-align: center;
+.user-profile {
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
 }
 
-
-/* .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.user-profile img {
+  border-radius: 50%;
+  max-width: 100%;
 }
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-} */
