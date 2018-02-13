@@ -26,8 +26,6 @@ class App extends Component {
 		this.handleAddCar = this.handleAddCar.bind(this);
 		this.login = this.login.bind(this); 
 		this.logout = this.logout.bind(this); 
-		this.dataWMilisekundach = Date.now();
-		
     }
 
     handleChange = (e) => {
@@ -57,10 +55,11 @@ class App extends Component {
 	handleAddCar(e) {
 		e.preventDefault();
 		const carsRef = firebase.database().ref('cars');
+		// verify the data of car to add before adding to FireBase
 		const car = {
 			id : this.state.id,
-			registration_number : this.state.registration_number,
-			vin_number : this.state.vin_number,
+			registration_number : this.state.registration_number.replace(/\s+/g, ''),
+			vin_number : this.state.vin_number.replace(/\s+/g, ''),
 			brand : this.state.brand,
 			model : this.state.model,
 			created_at : Date.now(),
