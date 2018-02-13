@@ -21,6 +21,11 @@ class App extends Component {
 		   cars : [],
 		   user : null,
 		   invisible : 'invisible',
+		   invalidRegistrationNumber : '',
+		   invalidVin : '',
+		   invalidMileage : '',
+		   popUpTopPosition : 150,
+		   popUpRightPosition : 0
         };
 		this.handleChange = this.handleChange.bind(this);
 		this.handleAddCar = this.handleAddCar.bind(this);
@@ -148,10 +153,12 @@ class App extends Component {
 		});
 	}
 
-	showPopUp = (car) => {
+	showPopUp = (car, e) => {
 		this.setState ({
 			invisible: 'pop-up',
-			carIndex : car
+			carIndex : car,
+			popUpTopPosition : e.clientY-10,
+			popUpRightPosition : e.clientX-330
 		});
 	}
 
@@ -179,7 +186,7 @@ class App extends Component {
                     modified_at : this.convertDateToUTC(Date.now()),
 					mileage: cars[car].mileage,
 					is_active : cars[car].is_active,
-					remove : <button onClick={() => this.showPopUp(car)}>Remove</button>
+					remove : <button onClick={(e) => this.showPopUp(car, e)}>Remove</button>
 				});
 			}
 			tableData.shift(); // removes first ( unneeded ) element - the header
@@ -214,7 +221,7 @@ class App extends Component {
 	render() {
 
 		var popUp = 
-			<div className={this.state.invisible}>
+			<div className={this.state.invisible} style={{top: this.state.popUpTopPosition, left: this.state.popUpRightPosition}}>
 				<p className="question">
 					ARE YOU SURE YOU WANT TO<br/>
 					<span>DELETE</span> THIS CAR?

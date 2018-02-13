@@ -108,8 +108,8 @@ form button {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  right: 50%;
-  top: 150px;
+  /* right: 50%; */
+  /* top: 150px; */
   width: 260px;
   height: 120px;
   background-color: rgb(255, 200, 100);
