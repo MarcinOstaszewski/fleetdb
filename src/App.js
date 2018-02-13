@@ -20,7 +20,7 @@ class App extends Component {
 		   is_active : '',
 		   cars : [],
 		   user : null,
-		   invisible : 'invisible'
+		   invisible : 'invisible',
         };
 		this.handleChange = this.handleChange.bind(this);
 		this.handleAddCar = this.handleAddCar.bind(this);
@@ -52,33 +52,80 @@ class App extends Component {
 		});
 	}
 
+	verifyRegistrationNumber() {
+		if (this.state.registration_number === '' || this.state.registration_number.length > 10) {
+			this.setState({
+				invalidRegistrationNumber : 'Registration Number must be 1 to 10 letters long.'
+			});
+			return 1;
+		} else {
+			this.setState({
+				invalidRegistrationNumber : ''
+			});
+			return 0;
+		}
+	}
+	verifyVIN() {
+		if (this.state.vin_number === '' || this.state.vin_number.length > 17) {
+			this.setState({
+				invalidVIN : 'VIN Number must be 1 to 17 letters long.'
+			});
+			return 1;
+		} else {
+			this.setState({
+				invalidVIN : ''
+			});
+			return 0;
+		}
+	}
+	verifyMileage() {
+		if (this.state.mileage < 0) {
+			this.setState({
+				invalidMileage : 'Mileage can not be less than 0.'
+			});
+			return 1;
+		} else {
+			this.setState({
+				invalidMileage : ''
+			});
+			return 0;
+		}
+	}
+
 	handleAddCar(e) {
 		e.preventDefault();
 		const carsRef = firebase.database().ref('cars');
 		// verify the data of car to add before adding to FireBase
-		const car = {
-			id : this.state.id,
-			registration_number : this.state.registration_number.replace(/\s+/g, ''),
-			vin_number : this.state.vin_number.replace(/\s+/g, ''),
-			brand : this.state.brand,
-			model : this.state.model,
-			created_at : Date.now(),
-			modified_at : Date.now(),
-			mileage : this.state.mileage,
-			is_active : this.state.is_active
-		}
-		carsRef.push(car);
-		this.setState({
-			id : '',
-			registration_number : '',
-			vin_number : '',
-			brand : '',
-			model : '',
-			created_at : '',
-			modified_at : '',
-			mileage : '',
-			is_active : ''
-		});
+		const verification = 
+			this.verifyRegistrationNumber(this.state.registration_number) +
+			this.verifyVIN(this.state.vin_number) +
+			this.verifyMileage(this.state.mileage);
+
+		if (verification === 0) {
+			const car = {
+				id : this.state.id,
+				registration_number : this.state.registration_number.replace(/\s+/g, ''),
+				vin_number : this.state.vin_number.replace(/\s+/g, ''),
+				brand : this.state.brand,
+				model : this.state.model,
+				created_at : Date.now(),
+				modified_at : Date.now(),
+				mileage : this.state.mileage,
+				is_active : this.state.is_active
+			}
+			carsRef.push(car);
+			this.setState({
+				id : '',
+				registration_number : '',
+				vin_number : '',
+				brand : '',
+				model : '',
+				created_at : '',
+				modified_at : '',
+				mileage : '',
+				is_active : ''
+			});
+		} 
 	}
 
 	convertDateToUTC(date) { 
@@ -102,7 +149,6 @@ class App extends Component {
 	}
 
 	showPopUp = (car) => {
-		console.log(car);
 		this.setState ({
 			invisible: 'pop-up',
 			carIndex : car
@@ -167,8 +213,6 @@ class App extends Component {
 
 	render() {
 
-		// console.log(this.convertDateToUTC(Date.now()));
-
 		var popUp = 
 			<div className={this.state.invisible}>
 				<p className="question">
@@ -181,7 +225,6 @@ class App extends Component {
 				</div>
 			</div>;
 		
-
 
 		return (
 			<div className='app'>
@@ -226,6 +269,11 @@ class App extends Component {
 									</div>
 									<div><button>Add new car</button></div>
 								</form>
+								<div className="invalid-new-car-data-alert">
+									<div>{this.state.invalidRegistrationNumber}</div>
+									<div>{this.state.invalidVIN}</div>
+									<div>{this.state.invalidMileage}</div>
+								</div>
 							</section>
 						</div>
 						
@@ -279,7 +327,16 @@ class App extends Component {
 								className="-striped -highlight"/>
 							</section>
 						</div>
+
 						{popUp}
+
+						<footer>
+							<div className='wrapper'>
+									<div className='foot'>
+										<p> Copyright Car Fleet DB Manager Co.</p>
+									</div>							
+							</div>
+						</footer>
 					</div>
 
 					:

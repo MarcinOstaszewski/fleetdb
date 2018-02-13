@@ -99,6 +99,10 @@ form button {
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
 }
 
+.invalid-new-car-data-alert {
+  font-size: 12px;
+  color: rgb(190, 11, 11);
+}
 .pop-up {
   position: absolute;
   display: flex;
@@ -108,7 +112,7 @@ form button {
   top: 150px;
   width: 260px;
   height: 120px;
-  background-color: #e7e7e7;
+  background-color: rgb(255, 200, 100);
   border: 1px solid #8a8989;
   border-top: 7px solid rgb(219, 17, 17);
   margin-right: -130px;
@@ -129,7 +133,7 @@ form button {
   color: #fff;
   padding: 5px 20px;
   border-radius: 4px;
-  background-color: #10966a;
+  background-color: rgb(110, 170, 225);
   cursor: pointer;
   box-shadow: 1px 2px 3px 0px #103D5D;
 }
@@ -141,39 +145,11 @@ form button {
 .invisible {
   display: none;
 }
-/* ul {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  width: calc(50% - 50px);
-  list-style-type: none;
-  margin-right: 50px;
-  background-color: rgb(237, 237, 237);
-  color: #000;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 4px 0 rgba(0,0,0,.14), 0 3px 3px -2px rgba(0,0,0,.12), 0 1px 8px 0 rgba(0,0,0,.2);
-} */
 
 h2 h3 {
   font-size: 26px;
   font-weight: 300;
   color: #103D5D;
-}
-
-li h3 {
-  background-color: #103D5D;
-  margin: 0;
-  color: #fff;
-  font-weight: 300;
-  padding: 15px;
-}
-
-li p {
-  padding: 15px;
 }
 
 .display-cars {
@@ -191,4 +167,17 @@ li p {
 .user-profile img {
   border-radius: 50%;
   max-width: 100%;
+}
+
+footer {
+  margin-top: 20px;
+  color: #fff;
+  background-color: #103D5D;
+  padding: 5px 0 60px 0;
+  font-size: 16px;
+  text-align: right;
+  height: 50px;
+}
+footer p {
+  margin-bottom: 20px;
 }
