@@ -19,12 +19,15 @@ class App extends Component {
 		   mileage : '',
 		   is_active : '',
 		   cars : [],
-		   user : null
+		   user : null,
+		   invisible : 'invisible'
         };
 		this.handleChange = this.handleChange.bind(this);
 		this.handleAddCar = this.handleAddCar.bind(this);
 		this.login = this.login.bind(this); 
 		this.logout = this.logout.bind(this); 
+		this.dataWMilisekundach = Date.now();
+		
     }
 
     handleChange = (e) => {
@@ -60,8 +63,8 @@ class App extends Component {
 			vin_number : this.state.vin_number,
 			brand : this.state.brand,
 			model : this.state.model,
-			created_at : this.state.created_at,
-			modified_at : this.state.modified_at,
+			created_at : Date.now(),
+			modified_at : Date.now(),
 			mileage : this.state.mileage,
 			is_active : this.state.is_active
 		}
@@ -79,16 +82,39 @@ class App extends Component {
 		});
 	}
 
-	removeCar(carIndex) {
+	convertDateToUTC(date) { 
+		return new Date(date).toISOString();
+		// new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); 
+	}
+
+	removeCar = (carIndex) => {
 		const carRef = firebase.database().ref(`/cars/${carIndex}`);
 		carRef.remove();
+		this.setState({
+			invisible : 'invisible',
+			carIndex : ''
+		})
+	}
+
+	cancelRemoveCar = () => {
+		this.setState({
+			invisible : 'invisible'
+		});
+	}
+
+	showPopUp = (car) => {
+		console.log(car);
+		this.setState ({
+			invisible: 'pop-up',
+			carIndex : car
+		});
 	}
 
 	componentDidMount() {
 
 		auth.onAuthStateChanged((user) => {
 			if (user) {
-			this.setState({ user });
+				this.setState({ user });
 			} 
 		});
 
@@ -104,11 +130,11 @@ class App extends Component {
                     vin_number : cars[car].vin_number,
                     brand : cars[car].brand,
                     model : cars[car].model,
-                    created_at : cars[car].created_at,
-                    modified_at : cars[car].modified_at,
+                    created_at : this.convertDateToUTC(Date.now()),
+                    modified_at : this.convertDateToUTC(Date.now()),
 					mileage: cars[car].mileage,
 					is_active : cars[car].is_active,
-					remove : <button onClick={() => this.removeCar(car)}>Remove</button>
+					remove : <button onClick={() => this.showPopUp(car)}>Remove</button>
 				});
 			}
 			tableData.shift(); // removes first ( unneeded ) element - the header
@@ -141,11 +167,22 @@ class App extends Component {
 
 
 	render() {
-		// let userName = (
-		// 	<div>
-		// 		<div className='rightAlign'>Witaj, {this.state.user.displayName || this.state.user.email} </div>
-		// 		<div onClick={this.logout}>Log Out</div>                
-		// 	</div>);
+
+		// console.log(this.convertDateToUTC(Date.now()));
+
+		var popUp = 
+			<div className={this.state.invisible}>
+				<p className="question">
+					ARE YOU SURE YOU WANT TO<br/>
+					<span>DELETE</span> THIS CAR?
+				</p>
+				<div className="buttons">
+					<div className="button cancel" onClick={this.cancelRemoveCar}>CANCEL</div>
+					<div className="button delete" onClick={() => this.removeCar(this.state.carIndex)}>DELETE</div>
+				</div>
+			</div>;
+		
+
 
 		return (
 			<div className='app'>
@@ -176,14 +213,23 @@ class App extends Component {
 									<div><input type="text" name="vin_number" placeholder="Vin number" onChange={this.handleChange} value={this.state.vin_number.toUpperCase()} /></div>
 									<div><input type="text" name="brand" placeholder="Brand" onChange={this.handleChange} value={this.state.brand.toUpperCase()} /></div>
 									<div><input type="text" name="model" placeholder="Model" onChange={this.handleChange} value={this.state.model.toUpperCase()} /></div>
-									<div><input type="text" name="created_at" placeholder="Created at" onChange={this.handleChange} value={this.state.created_at} /></div>
-									<div><input type="text" name="modified_at" placeholder="Modified at" onChange={this.handleChange} value={this.state.modified_at} /></div>
-									<div><input type="text" name="mileage" placeholder="Mileage" onChange={this.handleChange} value={this.state.mileage} /></div>
-									<div><input type="text" name="is_active" placeholder="Is active?" onChange={this.handleChange} value={this.state.is_active}/></div>
+									{/* <div><input type="text" name="created_at" placeholder="Created at" onChange={this.handleChange} value={this.state.created_at} /></div> */}
+									{/* <div><input type="text" name="modified_at" placeholder="Modified at" onChange={this.handleChange} value={this.state.modified_at} /></div> */}
+									<div><input type="number" name="mileage" placeholder="Mileage" onChange={this.handleChange} value={this.state.mileage} /></div>
+									<div>
+										<select
+											className="is-active"
+											onChange={this.handleChange}
+											value={this.state.is_active}>
+											<option value="1">Active</option>
+											<option value="0">Inactive</option>
+										</select>
+									</div>
 									<div><button>Add new car</button></div>
 								</form>
 							</section>
 						</div>
+						
 						<div className='container'>
 							<section className='display-cars'>
 								<ReactTable 
@@ -234,12 +280,16 @@ class App extends Component {
 								className="-striped -highlight"/>
 							</section>
 						</div>
+						{popUp}
 					</div>
+
 					:
-					<div className='container flex'>
+
+					<div className='container flex'> 
 						<h2>Welcome on our Single Page Application. </h2>
 						<h2>Please log in to continue.</h2>
 					</div>
+
 				}
 			</div>
 		);
