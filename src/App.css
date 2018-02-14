@@ -86,6 +86,8 @@ header .wrapper .buttonHeader {
   position: absolute;
   top: 200px;
   max-width: 1100px;
+  min-height: 40px;
+  max-height: 200px;
   box-shadow: 4px 4px 12px #999;
   background-color: rgb(128, 158, 228);
 }
@@ -122,9 +124,14 @@ form button {
 }
 
 .invalid-new-car-data-alert {
+  display: block;
   font-size: 12px;
   color: rgb(190, 11, 11);
+  margin-left: 20px;
 }
+/* .invalid-new-car-data-alert > div {
+  display: block;
+} */
 
 .white-bg {
   position: absolute;

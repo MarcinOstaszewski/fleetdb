@@ -23,7 +23,7 @@ class App extends Component {
 		   user : null,
 		   invisible : 'invisible',
 		   invalidRegistrationNumber : '',
-		   invalidVin : '',
+		   invalidVIN : '',
 		   invalidMileage : '',
 		   popUpTopPosition : 150,
 		   popUpRightPosition : 0,
@@ -136,6 +136,7 @@ class App extends Component {
 	removeCar = (carIndex) => {
 		const carRef = firebase.database().ref(`/cars/${carIndex}`);
 		carRef.remove();
+		
 		this.setState({
 			invisible : 'invisible',
 			carIndex : ''
@@ -145,14 +146,20 @@ class App extends Component {
 	cancelRemoveCar = (e) => {
 		e.preventDefault();
 		this.setState({
-			invisible : 'invisible'
+			invisible : 'invisible',
+			invalidRegistrationNumber : '',
+			invalidVIN : '',
+			invalidMileage : ''
 		});
 	}
 
 	cancelModifyCar = (e) => {
 		e.preventDefault();
 		this.setState({
-			modifyCarInvisible : 'invisible'
+			modifyCarInvisible : 'invisible',
+			invalidModifyRegistrationNumber : '',
+			invalidModifyVIN : '',
+			invalidModifyMileage : ''
 		});
 	}
 
@@ -184,7 +191,7 @@ class App extends Component {
 			this.verifyModifiedVIN(this.state.modifyVin_number) +
 			this.verifyModifiedMileage(this.state.modifyMileage);
 			
-		let dateCreated = this.state.originalDB[this.state.modifyCarIndex].created_at;
+		let dateCreated = this.state.originalDB[this.state.modifyCarIndex].created_at; //store the original date for created_at
 		let now = new Date().toISOString();
 		const carRef = firebase.database().ref(`/cars/${this.state.modifyCarIndex}`);
 		const carsRef = firebase.database().ref('cars'); // reference to the whole cars_DB
@@ -242,6 +249,13 @@ class App extends Component {
 		});
 	}
 
+
+
+	// ********************************************************************************************************
+	// *****  COMPONENT DID MOUNT *****************************************************************************
+	// ********************************************************************************************************
+
+
 	componentDidMount() {
 
 		auth.onAuthStateChanged((user) => {
@@ -251,6 +265,7 @@ class App extends Component {
 		});
 
 		const carsRef = firebase.database().ref('cars');
+		// create reference to FireBase and build data for table and stores it in state for handleModifyCar method
 		carsRef.on('value', (snapshot) => {
 			let cars = snapshot.val();
 			let tableData = [];
@@ -263,14 +278,13 @@ class App extends Component {
                     vin_number : cars[car].vin_number,
                     brand : cars[car].brand,
                     model : cars[car].model,
-                    created_at : this.convertDateToUTC(Date.now()),
-                    modified_at : this.convertDateToUTC(Date.now()),
+                    created_at : cars[car].created_at,
+                    modified_at : cars[car].modified_at,
 					mileage: cars[car].mileage,
 					is_active : cars[car].is_active,
 					remove : <button onClick={(e) => this.showPopUp(car, e)}>Remove</button>
-				});
+				});				
 			}
-			tableData.shift(); // removes first ( unneeded ) element - the header
 			this.setState({
 				originalDB : cars,
 				cars: tableData
@@ -278,7 +292,7 @@ class App extends Component {
 		});
 
 	
-	// USED ONLY FOR CREATING CARS_DB ON FIREBASE
+			// USED ONLY FOR CREATING CARS_DB ON FIREBASE
 		// fetch(`https://vehiclefakedb.firebaseio.com/masterSheet.json`).then( r =>   r.json() ).then( response => {		
 		// 	const carsRef = firebase.database().ref('cars');
 		// 	response.forEach( element => {
@@ -341,11 +355,9 @@ class App extends Component {
 					<div>
 						<div className='container'>
 
-
 						{/* ***** SECTION ADD CAR ***** */}
 						
 							<section className='add-car'>
-
 								<form onSubmit={this.handleAddCar}>
 									<div><input type="text" name="id" placeholder="Car's ID" onChange={this.handleChange} value={this.state.id} /></div>
 									<div><input type="text" name="registration_number" placeholder="Registration number" onChange={this.handleChange} value={this.state.registration_number.toUpperCase()} /></div>
@@ -372,7 +384,6 @@ class App extends Component {
 									<div>{this.state.invalidMileage}</div>
 								</div>
 							</section>
-
 						</div>
 						
 						<div className='container'>
@@ -433,33 +444,35 @@ class App extends Component {
 						{/* ***** SECTION MODIFY CAR ***** */}
 
 						<div className={this.state.modifyCarInvisible}>
-							<section className="container modify-car" style={{top: this.state.modifyCarTopPosition, left: this.state.modifyCarLeftPosition}}>
-								<form onSubmit={this.handleModifyCar}>
-									<div><button className="cancel-modify-car" onClick={this.cancelModifyCar}>Cancel</button></div>
-									<div><input type="text" name="modifyId" placeholder="Car's ID" onChange={this.handleChange} value={this.state.modifyId} /></div>
-									<div><input type="text" name="modifyRegistration_number" placeholder="Registration number" onChange={this.handleChange} value={this.state.modifyRegistration_number.toUpperCase()} /></div>
-									<div><input type="text" name="modifyVin_number" placeholder="Vin number" onChange={this.handleChange} value={this.state.modifyVin_number.toUpperCase()} /></div>
-									<div><input type="text" name="modifyBrand" placeholder="Brand" onChange={this.handleChange} value={this.state.modifyBrand.toUpperCase()} /></div>
-									<div><input type="text" name="modifyModel" placeholder="Model" onChange={this.handleChange} value={this.state.modifyModel.toUpperCase()} /></div>
-									<div><input type="number" name="modifyMileage" placeholder="Mileage" onChange={this.handleChange} value={this.state.modifyMileage} /></div>
-									<div>
-										<select
-											name="modifyIs_active"
-											className="is-active"
-											onChange={this.handleChange}
-											value={this.state.modifyIs_active}>
-											<option value="1">Active</option>
-											<option value="0">Inactive</option>
-										</select>
+							<div className="container">
+								<section className="modify-car" style={{top: this.state.modifyCarTopPosition, left: this.state.modifyCarLeftPosition}}>
+									<form onSubmit={this.handleModifyCar}>
+										<div><button className="cancel-modify-car" onClick={this.cancelModifyCar}>Cancel</button></div>
+										<div><input type="text" name="modifyId" placeholder="Car's ID" onChange={this.handleChange} value={this.state.modifyId} /></div>
+										<div><input type="text" name="modifyRegistration_number" placeholder="Registration number" onChange={this.handleChange} value={this.state.modifyRegistration_number.toUpperCase()} /></div>
+										<div><input type="text" name="modifyVin_number" placeholder="Vin number" onChange={this.handleChange} value={this.state.modifyVin_number.toUpperCase()} /></div>
+										<div><input type="text" name="modifyBrand" placeholder="Brand" onChange={this.handleChange} value={this.state.modifyBrand.toUpperCase()} /></div>
+										<div><input type="text" name="modifyModel" placeholder="Model" onChange={this.handleChange} value={this.state.modifyModel.toUpperCase()} /></div>
+										<div><input type="number" name="modifyMileage" placeholder="Mileage" onChange={this.handleChange} value={this.state.modifyMileage} /></div>
+										<div>
+											<select
+												name="modifyIs_active"
+												className="is-active"
+												onChange={this.handleChange}
+												value={this.state.modifyIs_active}>
+												<option value="1">Active</option>
+												<option value="0">Inactive</option>
+											</select>
+										</div>
+										<div><button>Modify data</button></div>
+									</form>
+									<div className="invalid-new-car-data-alert">
+										<div>{this.state.invalidModifyRegistrationNumber}</div>
+										<div>{this.state.invalidModifyVIN}</div>
+										<div>{this.state.invalidModifyMileage}</div>
 									</div>
-									<div><button>Modify data</button></div>
-								</form>
-								<div className="invalid-new-car-data-alert">
-									<div>{this.state.invalidModifyRegistrationNumber}</div>
-									<div>{this.state.invalidModifyVIN}</div>
-									<div>{this.state.invalidModifyMileage}</div>
-								</div>
-							</section>
+								</section>
+							</div>
 						</div>
 
 
