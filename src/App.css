@@ -1,6 +1,11 @@
+html {
+  min-height:100%;
+  position: relative;
+}
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: rgb(191, 210, 250 );
+  /* height: 100%; */
 }
 
 header {
@@ -22,8 +27,17 @@ header .wrapper {
   display: flex;
   justify-content: space-between;
 }
+.logInInfo {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
 .rightAlign {
   margin-left: 0 auto;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
 }
 header .wrapper .buttonHeader {
   border-radius: 5px;
@@ -55,7 +69,8 @@ header .wrapper .buttonHeader {
   margin: 0 auto;
 }
 
-.add-item {
+.add-car,
+.modify-car {
   border-radius: 3px;
   border-top: 3px solid #103D5D;
   background-color: rgb(171, 192, 240);
@@ -67,8 +82,15 @@ header .wrapper .buttonHeader {
   margin-bottom: 10px;  
   width: 100%;
 }
-
-.add-item form {
+.modify-car {
+  position: absolute;
+  top: 200px;
+  max-width: 1100px;
+  box-shadow: 4px 4px 12px #999;
+  background-color: rgb(128, 158, 228);
+}
+.add-car form,
+.modify-car form {
   display: flex;
   width: 100%;
   font-size: 14px;
@@ -103,23 +125,48 @@ form button {
   font-size: 12px;
   color: rgb(190, 11, 11);
 }
+
+.white-bg {
+  position: absolute;
+  top: 0px;
+  /* left: 0px; */
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: background-color 900ms ease;
+}
+.white-bg:hover {
+  transition: background-color 900ms ease;
+  background-color: rgba(255, 255, 255, 0.7);
+  
+}
 .pop-up {
   position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  /* right: 50%; */
-  /* top: 150px; */
   width: 260px;
   height: 120px;
-  background-color: rgb(255, 200, 100);
+  background-color: #f1f1f1;
   border: 1px solid #8a8989;
-  border-top: 7px solid rgb(219, 17, 17);
+  border-top: 8px solid rgb(219, 17, 17);
   margin-right: -130px;
   padding: 10px;
   font-weight: 700;
-  border-radius: 7px;
-  
+  border-radius: 8px 0 8px 8px;
+  box-shadow: 4px 4px 12px #999;
+}
+
+.pop-up::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: -20px;
+  width: 0;
+  height: 0;
+  border-left: 20px solid rgb(219, 17, 17);
+  border-top: 0px solid transparent;
+  border-bottom: 8px solid transparent;
 }
 .pop-up p {
   text-align: center;
@@ -135,9 +182,11 @@ form button {
   border-radius: 4px;
   background-color: rgb(110, 170, 225);
   cursor: pointer;
-  box-shadow: 1px 2px 3px 0px #103D5D;
+  box-shadow: 1px 2px 3px 0px rgb(50, 64, 73);
 }
-
+.cancel-modify-car {
+  background-color: rgb(110, 170, 225);
+}
 .pop-up .buttons .delete {
   background-color: rgb(245, 48, 22);
 }
