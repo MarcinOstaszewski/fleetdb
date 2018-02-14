@@ -1,5 +1,6 @@
 {
   "name": "fleetdb",
+  "homepage" : "https://marcinostaszewski.github.io/fleetdb/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
