@@ -1,19 +1,25 @@
 {
   "name": "fleetdb",
-  "homepage" : "https://marcinostaszewski.github.io/fleetdb/",
+  "homepage": "https://marcinostaszewski.github.io/fleetdb/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "eslint": "^6.3.0",
     "firebase": "^4.9.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.1",
+    "react-scripts": "^3.1.1",
     "react-table": "^6.7.6"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.1.1"
   }
 }
